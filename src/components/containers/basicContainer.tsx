@@ -1,9 +1,11 @@
 import BasicDataField from "../fields/basicDataField";
 import BasicInputField from "../fields/basicInputField";
 import ActionButton from "../buttons/actionButton";
-import { useContext, useMemo, useState } from "react";
-import { useAccounts, useSignAndExecuteTransactionBlock, useSuiClient, useSuiClientQuery } from "@mysten/dapp-kit";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useAccounts, useSignAndExecuteTransaction, useSuiClient, useSuiClientQuery } from "@mysten/dapp-kit";
 import { AppContext } from "@/context/AppContext";
+import { TransactionBlock } from "@mysten/sui"
+import { getFullnodeUrl, SuiClient } from '@mysten/sui/client';
 
 const BasicContainer = () => {
   const { walletAddress, suiName } = useContext(AppContext);
@@ -13,8 +15,7 @@ const BasicContainer = () => {
   const [selectedToken, setSelectedToken] = useState<string>("SUI");
   const client = useSuiClient();
   const [account] = useAccounts();
-  const { mutate: signAndExecuteTransactionBlock } =
-    useSignAndExecuteTransactionBlock();
+  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
   const userBalance = useMemo(() => {
     if (suiBalance?.totalBalance) {
@@ -23,6 +24,31 @@ const BasicContainer = () => {
       return 0;
     }
   }, [suiBalance]);
+
+  useEffect(() => {
+    async function runGetNode(){
+      // use getFullnodeUrl to define Devnet RPC location
+      const rpcUrl = getFullnodeUrl('devnet');
+      
+      // create a client connected to devnet
+      const client = new SuiClient({ url: rpcUrl });
+      
+      // get coins owned by an address
+      // replace <OWNER_ADDRESS> with actual address in the form of 0x123...
+      // const getOwnCoin = await client.getCoins({
+      //   owner: walletAddress,
+      // });
+
+      const getObject = await client.getObject({ id : '0xc13f797bf739164e5ecaada9438c82ba0d9dd8f8b3140b188e3cdeb1b6cebbfc'})
+      console.log(getObject)
+
+      
+
+      // console.log('getCoin',getOwnCoin)
+    }
+
+    runGetNode()
+  }, [walletAddress])
 
   return (
     <div className="w-[80%] flex flex-col items-center justify-center gap-4">

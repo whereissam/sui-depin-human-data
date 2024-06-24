@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
-import SuiWalletProvider from "@/context/WalletContext";
+// import SuiWalletProvider from "@/context/WalletContext";
 import { type AppType } from "next/dist/shared/lib/utils";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { ZkSendWallet, registerZkSendWallet } from "@mysten/zksend";
+// import { registerStashedWallet } from "@mysten/zksend";
 import { useState, useEffect } from "react";
 import { Inter } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,17 +11,18 @@ import { AppContextProvider } from "@/context/AppContext";
 import "@/styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import MetaTagsContainer from "@/components/containers/metaTagsContainer";
+import dynamic from 'next/dynamic';
 
 const inter = Inter({ subsets: ["latin"] });
+const SuiWalletProvider = dynamic(() => import('@/context/WalletContext'), { ssr: false });
 
 const queryClient = new QueryClient();
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const [isClient, setIsClient] = useState<boolean>(false);
-
+  // registerStashedWallet('Your dApp Name');
   useEffect(() => {
     setIsClient(true);
-    registerZkSendWallet("Sui Dapp Scaffold", {});
   }, []);
 
   return (
